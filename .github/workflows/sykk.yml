@@ -1,37 +1,40 @@
 name: Snyk Analysis
 env:
-  DOTNET_VERSION: '8.x'
+  DOTNET_VERSION: '8.0.303'  # La versió de .NET
+
 on: push
+
 jobs:
   security:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Snyk CLI
-        uses: snyk/actions/setup@master
-
+        
+      - uses: snyk/actions/setup@master
+        
       - name: Configurando la versión de .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Instalar snyk-to-html
-        run: npm install -g snyk-to-html
-
+          dotnet-version: ${{ env.DOTNET_VERSION }}  
+      
       - name: Snyk monitor
         run: snyk code test --sarif-file-output=snyk.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-      - name: Generar reporte HTML de Snyk
+        
+      - name: Instalar snyk-to-html
+        run: npm install -g snyk-to-html
+        
+      - name: Generar reporte HTML desde JSON
         run: snyk code test --json | snyk-to-html -o code-test-results.html
-
-      - name: Upload reporte HTML como artefacto
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      
+      - name: Subir reporte HTML como artefacto
         uses: actions/upload-artifact@v4
         with:
-          name: snyk-code-report
+          name: snyk-report
           path: code-test-results.html
 
       - name: Upload result to GitHub Code Scanning
