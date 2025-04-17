@@ -137,7 +137,7 @@
           "dependencies": {
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
-              "version": "[8.0.11, )"
+              "version": "[8.0.7, )"
             },
             "NUnit": {
               "target": "Package",
@@ -145,7 +145,7 @@
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.6.2, )"
+              "version": "[6.4.0, )"
             }
           },
           "imports": [
