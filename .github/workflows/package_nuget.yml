@@ -52,7 +52,7 @@ jobs:
         run: |
           dotnet nuget push ./packages/*.nupkg \
             --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
-            --api-key ${{ secrets.GH_TOKEN }} \
+            --api-key ${{ secrets.GHUB_TOKEN }} \
             --skip-duplicate
 
   release:
