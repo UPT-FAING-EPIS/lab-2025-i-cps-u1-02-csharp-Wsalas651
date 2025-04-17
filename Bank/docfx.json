@@ -17,7 +17,10 @@
     "content": [
       {
         "files": [
-          "**/*.{md,yml}"
+          "index.md",
+          "disenio.md",
+          "Cobertura/SummaryGithub.md",
+          "**/*.yml"
         ],
         "exclude": [
           "_site/**"
