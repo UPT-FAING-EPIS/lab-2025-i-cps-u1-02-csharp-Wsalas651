@@ -38,16 +38,7 @@ jobs:
 
       - name: Iniciar análisis SonarQube
         run: 
-              dotnet-sonarscanner begin \
-              /k:"72943816s_lab-2025-i-cps-u1-02-csharp-wsalas651" \
-              /o:"72943816s" \
-              /d:sonar.login="***" \
-              /d:sonar.host.url="https://sonarcloud.io" \
-              /d:sonar.cs.opencover.reportsPaths="Bank/**/coverage.opencover.xml" \
-              /d:sonar.qualitygate.wait=true \
-              /d:sonar.exclusions="**/*.html" \
-              /d:sonar.coverage.exclusions="Bank/Bank.WebApi/Program.cs"
-
+              dotnet-sonarscanner begin /k:"72943816s_lab-2025-i-cps-u1-02-csharp-wsalas651" /o:"72943816s" /d:sonar.login="***" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="Bank/**/coverage.opencover.xml" /d:sonar.qualitygate.wait=true /d:sonar.exclusions="**/*.html" /d:sonar.coverage.exclusions="Bank/Bank.WebApi/Program.cs"
       - name: Compilar solución
         run: dotnet build "Bank/Bank.sln"
       - name: Finalizar análisis SonarQube
