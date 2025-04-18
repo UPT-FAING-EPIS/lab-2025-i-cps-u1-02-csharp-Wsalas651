@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Bank.WebApi\Bank.WebApi.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+  <SonarQubeTestProject>true</SonarQubeTestProject>
+  </PropertyGroup>
+
 </Project>
