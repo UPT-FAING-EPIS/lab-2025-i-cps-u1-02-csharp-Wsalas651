@@ -35,10 +35,10 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Instalar herramientas
+      - name: Instalar dotnet-sonarscanner y coverlet
         run: |
           dotnet tool install -g dotnet-sonarscanner
-          dotnet tool install -g dotnet-coverage
+          dotnet add Bank/Bank.Tests/Bank.Tests.csproj package coverlet.msbuild
 
       - name: Restaurar dependencias
         run: dotnet restore "Bank/Bank.sln"
@@ -47,15 +47,10 @@ jobs:
         run: dotnet-sonarscanner begin /k:"${{ env.SONAR_PROJECT }}" /o:"${{ env.SONAR_ORG }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" /d:sonar.qualitygate.wait=true /d:sonar.exclusions="**/*.html" /d:sonar.coverage.exclusions="Bank/Bank.WebApi/Program.cs"
       
       - name: Compilar solución
-        run: dotnet build "Bank/Bank.sln" --configuration Release --no-restore
-      
+        run: dotnet build "Bank/Bank.sln" --configuration Release
+
       - name: Ejecutar tests con cobertura
-        run: |
-          dotnet test "Bank/Bank.sln" --configuration Release --no-build --collect:"XPlat Code Coverage" --logger "console;verbosity=detailed" --results-directory ./TestResults
-          
-      - name: Generar reportes de cobertura en formato OpenCover
-        run: |
-          find ./TestResults -name "*.cobertura.xml" | xargs -I{} dotnet-coverage convert {} -f opencover -o coverage.opencover.xml
+        run: dotnet test "Bank/Bank.sln" --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="./coverage.opencover.xml"
       
       - name: Finalizar análisis SonarQube
         run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
@@ -66,7 +61,7 @@ jobs:
       
       - name: Crear paquete NuGet
         run: |
-          dotnet pack "Bank/Bank.sln" --configuration Release --output ./packages --include-symbols --no-build
+          dotnet pack "Bank/Bank.sln" --configuration Release --output ./packages --include-symbols
       
       - name: Publicar paquete en GitHub Packages
         run: |
