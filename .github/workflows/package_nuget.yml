@@ -43,14 +43,14 @@ jobs:
         run: dotnet restore "Bank/Bank.sln"
 
       - name: Iniciar análisis SonarQube
-        run: dotnet-sonarscanner begin /k:"${{ env.SONAR_PROJECT }}" /o:"${{ env.SONAR_ORG }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="Bank/Bank.WebApi.Tests/TestResults/**/*.opencover.xml" /d:sonar.qualitygate.wait=true /d:sonar.exclusions="**/*.html,**/Bank.WebApi/Program.cs"
+        run: dotnet-sonarscanner begin /k:"${{ env.SONAR_PROJECT }}" /o:"${{ env.SONAR_ORG }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="Bank/Bank.WebApi.Tests/TestResults/**/*.cobertura.xml" /d:sonar.qualitygate.wait=true /d:sonar.exclusions="**/*.html,**/Bank.WebApi/Program.cs"
 
       - name: Compilar solución
         run: dotnet build "Bank/Bank.sln" --configuration Release
 
       - name: Ejecutar tests con cobertura
-        run: dotnet test "Bank/Bank.sln" --collect:"XPlat Code Coverage;Format=opencover"
-
+        run: |
+          dotnet test Bank/Bank.WebApi.Tests/Bank.WebApi.Tests.csproj --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude="[xunit.*]*" /p:CoverletOutput=./TestResults/coverage.opencover.xml
       - name: Verificar cobertura generada
         run: find . -name "coverage.opencover.xml"
 
