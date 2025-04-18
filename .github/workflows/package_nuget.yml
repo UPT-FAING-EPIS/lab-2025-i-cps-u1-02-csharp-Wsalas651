@@ -49,7 +49,7 @@ jobs:
         run: dotnet build "Bank/Bank.sln" --configuration Release
 
       - name: Ejecutar tests con cobertura
-        run: dotnet test "Bank/Bank.sln" --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="./coverage.opencover.xml"
+        run: dotnet test "Bank/Bank.sln" --collect:"XPlat Code Coverage;Format=opencover"
       
       - name: Finalizar análisis SonarQube
         run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
