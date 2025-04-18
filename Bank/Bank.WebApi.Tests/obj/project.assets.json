@@ -479,7 +479,7 @@
           }
         }
       },
-      "Bank.WebApi/1.0.0": {
+      "UPT-FAING-EPIS.Bank.WebApi/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
@@ -488,10 +488,10 @@
           "Swashbuckle.AspNetCore": "6.4.0"
         },
         "compile": {
-          "bin/placeholder/Bank.WebApi.dll": {}
+          "bin/placeholder/UPT-FAING-EPIS.Bank.WebApi.dll": {}
         },
         "runtime": {
-          "bin/placeholder/Bank.WebApi.dll": {}
+          "bin/placeholder/UPT-FAING-EPIS.Bank.WebApi.dll": {}
         },
         "frameworkReferences": [
           "Microsoft.AspNetCore.App"
@@ -1410,7 +1410,7 @@
         "version.txt"
       ]
     },
-    "Bank.WebApi/1.0.0": {
+    "UPT-FAING-EPIS.Bank.WebApi/1.0.0": {
       "type": "project",
       "path": "../Bank.WebApi/Bank.WebApi.csproj",
       "msbuildProject": "../Bank.WebApi/Bank.WebApi.csproj"
@@ -1418,10 +1418,10 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
-      "Bank.WebApi >= 1.0.0",
       "Microsoft.NET.Test.Sdk >= 17.8.0",
       "NUnit >= 3.13.3",
       "NUnit3TestAdapter >= 4.3.2",
+      "UPT-FAING-EPIS.Bank.WebApi >= 1.0.0",
       "coverlet.collector >= 6.0.0"
     ]
   },
@@ -1451,7 +1451,8 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {}
+        "https://api.nuget.org/v3/index.json": {},
+        "https://nuget.pkg.github.com/UPT-FAING-EPIS/index.json": {}
       },
       "frameworks": {
         "net8.0": {
