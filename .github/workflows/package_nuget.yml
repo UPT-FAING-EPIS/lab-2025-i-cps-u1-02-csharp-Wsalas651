@@ -7,18 +7,23 @@ env:
 
 on:
   push:
-    branches: [ "main" ] #
+    branches: [ "main" ]
   workflow_dispatch:
+
 permissions:
   contents: write
   checks: write
   actions: write
+  packages: write  # Añadido permiso para paquetes
+
 jobs:
   sonarqube:
     name: Sonarqube Analysis and NuGet Publishing
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Importante para SonarQube
 
       - uses: actions/setup-java@v4
         with:
@@ -38,21 +43,28 @@ jobs:
 
       - name: Iniciar análisis SonarQube
         run: dotnet-sonarscanner begin /k:"${{ env.SONAR_PROJECT }}" /o:"${{ env.SONAR_ORG }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="Bank/**/coverage.opencover.xml" /d:sonar.qualitygate.wait=true /d:sonar.exclusions="**/*.html" /d:sonar.coverage.exclusions="Bank/Bank.WebApi/Program.cs"
+      
       - name: Compilar solución
         run: dotnet build "Bank/Bank.sln"
+      
       - name: Finalizar análisis SonarQube
+        run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        
+      - name: Configurar NuGet
         run: |
-          dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/UPT-FAING-EPIS/index.json"
+      
       - name: Crear paquete NuGet
         run: |
           dotnet pack "Bank/Bank.sln" --configuration Release --output ./packages
+      
       - name: Publicar paquete en GitHub Packages
         run: |
-          dotnet nuget push ./packages/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GHUB_TOKEN }} --skip-duplicate
-        
+          dotnet nuget push ./packages/*.nupkg --source "github" --skip-duplicate
 
   release:
     name: Generar Release en GitHub
+    needs: sonarqube  # Asegura que se ejecute después de completar el job anterior
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -78,5 +90,5 @@ jobs:
           tag: ${{ env.TAG_NAME }}
           name: "Release ${{ env.TAG_NAME }}"
           bodyFile: "release_notes.md"
-          token: ${{ secrets.GHUB_TOKEN }}
+          token: ${{ secrets.GHUB_TOKEN }}  # Modificado para usar GITHUB_TOKEN
           replacesArtifacts: true
