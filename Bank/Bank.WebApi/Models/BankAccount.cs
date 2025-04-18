@@ -5,14 +5,8 @@ namespace Bank.WebApi.Models
         private readonly string m_customerName;
         private double m_balance;
 
-        // Constructor privado requerido por algunos frameworks
-        private BankAccount()
-        {
-            m_customerName = string.Empty; // Evita advertencia CS8618
-            m_balance = 0;
-        }
+        private BankAccount() { }
 
-        // Constructor principal con parámetros
         public BankAccount(string customerName, double balance)
         {
             m_customerName = customerName ?? throw new ArgumentNullException(nameof(customerName));
@@ -26,13 +20,16 @@ namespace Bank.WebApi.Models
         {
             ArgumentOutOfRangeException.ThrowIfGreaterThan(amount, m_balance);
             ArgumentOutOfRangeException.ThrowIfNegative(amount);
+
             m_balance -= amount;
         }
 
         public void Credit(double amount)
         {
             ArgumentOutOfRangeException.ThrowIfNegative(amount);
+
             m_balance += amount;
         }
+
     }
 }
