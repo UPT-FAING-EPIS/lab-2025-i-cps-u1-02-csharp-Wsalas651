@@ -43,7 +43,8 @@ jobs:
         run: dotnet restore "Bank/Bank.sln"
 
       - name: Iniciar análisis SonarQube
-        run: dotnet-sonarscanner begin /k:"${{ env.SONAR_PROJECT }}" /o:"${{ env.SONAR_ORG }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" /d:sonar.qualitygate.wait=true /d:sonar.exclusions="**/*.html" /d:sonar.coverage.exclusions="Bank/Bank.WebApi/Program.cs"
+        run: dotnet-sonarscanner begin /k:"${{ env.SONAR_PROJECT }}" /o:"${{ env.SONAR_ORG }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" /d:sonar.qualitygate.wait=true /d:sonar.exclusions="**/*.html" /d:sonar.exclusions="**/Bank.WebApi/Program.cs"
+
       
       - name: Compilar solución
         run: dotnet build "Bank/Bank.sln" --configuration Release
