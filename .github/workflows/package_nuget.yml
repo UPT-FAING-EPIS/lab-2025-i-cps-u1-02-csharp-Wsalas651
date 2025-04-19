@@ -67,7 +67,10 @@ jobs:
       - name: Crear paquete NuGet
         run: |
           dotnet pack "Bank/Bank.sln" --configuration Release --output ./packages --include-symbols
-
+      - name: Configurar NuGet
+        run: |
+          dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/UPT-FAING-EPIS/index.json"
+        
       - name: Publicar paquete en GitHub Packages
         run: |
           dotnet nuget push ./packages/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
