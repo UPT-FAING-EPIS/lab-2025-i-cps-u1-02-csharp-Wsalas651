@@ -40,7 +40,10 @@ jobs:
         run: dotnet restore "Bank/Bank.sln"
       
       - name: Ejecutar tests con cobertura
-        run: dotnet test "Bank/Bank.sln" --collect:"XPlat Code Coverage;Format=opencover"
+        run: dotnet test Bank/Bank.WebApi.Tests/Bank.WebApi.Tests.csproj \
+          /p:CollectCoverage=true \
+          /p:CoverletOutputFormat=opencover \
+          /p:CoverletOutput=TestResults/coverage.opencover.xml
 
       - name: Iniciar análisis SonarQube
         run: |
@@ -49,7 +52,7 @@ jobs:
             /o:"${{ env.SONAR_ORG }}" \
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.opencover.reportsPaths="Bank/**/coverage.opencover.xml" \
+            /d:sonar.cs.opencover.reportsPaths="Bank/Bank.WebApi.Tests/TestResults/coverage.opencover.xml" \
             /d:sonar.qualitygate.wait=true \
             /d:sonar.exclusions="**/*.html" \
             /d:sonar.coverage.exclusions="Bank/Bank.WebApi/Program.cs"
