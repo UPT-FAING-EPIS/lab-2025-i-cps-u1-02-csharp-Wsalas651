@@ -14,7 +14,7 @@ permissions:
   contents: write
   checks: write
   actions: write
-  packages: write  # Añadido permiso para paquetes
+  packages: write
 
 jobs:
   sonarqube:
@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Importante para SonarQube
+          fetch-depth: 0
 
       - uses: actions/setup-java@v4
         with:
@@ -42,11 +42,19 @@ jobs:
       - name: Restaurar dependencias
         run: dotnet restore "Bank/Bank.sln"
 
-      - name: Ejecutar pruebas
-        run: dotnet test "Bank/Bank.sln" --collect:"XPlat Code Coverage;Format=opencover"
-
       - name: Iniciar análisis SonarQube
-        run: dotnet-sonarscanner begin /k:"${{ env.SONAR_PROJECT }}" /o:"${{ env.SONAR_ORG }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="Bank/Bank.WebApi.Tests/TestResults/**/*.cobertura.xml" /d:sonar.qualitygate.wait=true /d:sonar.exclusions="**/*.html,**/Bank.WebApi/Program.cs"
+        run: |
+          dotnet-sonarscanner begin \
+            /k:"${{ env.SONAR_PROJECT }}" \
+            /o:"${{ env.SONAR_ORG }}" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.cobertura.reportsPaths="Bank/Bank.WebApi.Tests/TestResults/**/*.cobertura.xml" \
+            /d:sonar.qualitygate.wait=true \
+            /d:sonar.exclusions="**/*.html,**/Bank.WebApi/Program.cs"
+
+      - name: Ejecutar pruebas
+        run: dotnet test "Bank/Bank.sln" --collect:"XPlat Code Coverage;Format=cobertura"
 
       - name: Compilar solución
         run: dotnet build "Bank/Bank.sln" --configuration Release
@@ -89,5 +97,5 @@ jobs:
           tag: ${{ env.TAG_NAME }}
           name: "Release ${{ env.TAG_NAME }}"
           bodyFile: "release_notes.md"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GHUB_TOKEN }}
           replacesArtifacts: true
