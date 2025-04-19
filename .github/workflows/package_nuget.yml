@@ -5,7 +5,7 @@ env:
   SONAR_PROJECT: '72943816s_lab-2025-i-cps-u1-02-csharp-wsalas651'
 on:
   push:
-    branches: [ "main" ] #
+    branches: [ "main" ] 
   workflow_dispatch:
 permissions:
   contents: write
