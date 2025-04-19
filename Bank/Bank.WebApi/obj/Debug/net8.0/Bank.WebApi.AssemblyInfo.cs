@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("Banco API para laboratorio de CPS")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6219e5f47b254ea27f4a686557365630179fa1f4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+53065af609129ab3bb7bf68eb0449e83ac6639db")]
 [assembly: System.Reflection.AssemblyProductAttribute("Bank.WebApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Bank.WebApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
