@@ -8,7 +8,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "C:\\Users\\ASUS\\Documents\\CALIDAD\\lab-2025-i-cps-u1-02-csharp-Wsalas651\\Bank\\Bank.WebApi\\Bank.WebApi.csproj",
-        "projectName": "UPT-FAING-EPIS.Bank.WebApi",
+        "projectName": "Bank.WebApi",
         "projectPath": "C:\\Users\\ASUS\\Documents\\CALIDAD\\lab-2025-i-cps-u1-02-csharp-Wsalas651\\Bank\\Bank.WebApi\\Bank.WebApi.csproj",
         "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\ASUS\\Documents\\CALIDAD\\lab-2025-i-cps-u1-02-csharp-Wsalas651\\Bank\\Bank.WebApi\\obj\\",
@@ -53,10 +53,6 @@
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[8.0.7, )"
-            },
-            "NUnit": {
-              "target": "Package",
-              "version": "[3.13.3, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
