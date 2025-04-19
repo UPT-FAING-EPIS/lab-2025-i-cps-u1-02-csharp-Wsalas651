@@ -42,24 +42,17 @@ jobs:
       - name: Restaurar dependencias
         run: dotnet restore "Bank/Bank.sln"
 
+      - name: Ejecutar pruebas
+        run: dotnet test "Bank/Bank.sln" --collect:"XPlat Code Coverage;Format=opencover"
+
       - name: Iniciar análisis SonarQube
         run: dotnet-sonarscanner begin /k:"${{ env.SONAR_PROJECT }}" /o:"${{ env.SONAR_ORG }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="Bank/Bank.WebApi.Tests/TestResults/**/*.cobertura.xml" /d:sonar.qualitygate.wait=true /d:sonar.exclusions="**/*.html,**/Bank.WebApi/Program.cs"
 
       - name: Compilar solución
         run: dotnet build "Bank/Bank.sln" --configuration Release
 
-      - name: Ejecutar tests con cobertura
-        run: |
-          dotnet test Bank/Bank.WebApi.Tests/Bank.WebApi.Tests.csproj --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude="[xunit.*]*" /p:CoverletOutput=./TestResults/coverage.opencover.xml
-      - name: Verificar cobertura generada
-        run: find . -name "coverage.opencover.xml"
-
       - name: Finalizar análisis SonarQube
         run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-
-      - name: Configurar NuGet
-        run: |
-          dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/UPT-FAING-EPIS/index.json"
 
       - name: Crear paquete NuGet
         run: |
