@@ -39,11 +39,12 @@ jobs:
       - name: Restaurar dependencias
         run: dotnet restore "Bank/Bank.sln"
       
-      - name: Ejecutar tests con cobertura
-        run: dotnet test Bank/Bank.WebApi.Tests/Bank.WebApi.Tests.csproj \
-          /p:CollectCoverage=true \
-          /p:CoverletOutputFormat=opencover \
-          /p:CoverletOutput=TestResults/coverage.opencover.xml
+      - name: Ejecutar tests con cobertura (OpenCover)
+        run: |
+          dotnet test Bank/Bank.WebApi.Tests/Bank.WebApi.Tests.csproj \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=opencover \
+            /p:CoverletOutput=TestResults/coverage.opencover.xml
 
       - name: Iniciar análisis SonarQube
         run: |
