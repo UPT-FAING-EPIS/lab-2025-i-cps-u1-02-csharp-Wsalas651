@@ -5,8 +5,6 @@ namespace Bank.WebApi.Models
         private readonly string m_customerName;
         private double m_balance;
 
-        private BankAccount() { }
-
         public BankAccount(string customerName, double balance)
         {
             m_customerName = customerName ?? throw new ArgumentNullException(nameof(customerName));
