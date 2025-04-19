@@ -11,7 +11,7 @@ permissions:
   contents: write
   checks: write
   actions: write
-  packages: write
+  
 jobs:
   sonarqube:
     name: Sonarqube Analysis and NuGet Publishing
