@@ -14,7 +14,7 @@ permissions:
   contents: write
   checks: write
   actions: write
-  packages: write  # Añadido permiso para paquetes
+  packages: write  # Añadido permiso para paquetes de GH
 
 jobs:
   sonarqube:
@@ -22,6 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Importante para SonarQube
+
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -38,41 +41,37 @@ jobs:
 
       - name: Restaurar dependencias
         run: dotnet restore "Bank/Bank.sln"
-      
-      - name: Ejecutar tests con cobertura (OpenCover)
-        run: dotnet test Bank/Bank.WebApi.Tests/Bank.WebApi.Tests.csproj --collect:"XPlat Code Coverage"
 
       - name: Iniciar análisis SonarQube
-        run: |
-            dotnet-sonarscanner begin \
-            /k:"${{ env.SONAR_PROJECT }}" \
-            /o:"${{ env.SONAR_ORG }}" \
-            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.opencover.reportsPaths="Bank/Bank.WebApi.Tests/TestResults/**/*.cobertura.xml" \
-            /d:sonar.qualitygate.wait=true \
-            /d:sonar.exclusions="**/*.html" \
-            /d:sonar.coverage.exclusions="Bank/Bank.WebApi/Program.cs"
+        run: dotnet-sonarscanner begin /k:"${{ env.SONAR_PROJECT }}" /o:"${{ env.SONAR_ORG }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="Bank/Bank.WebApi.Tests/TestResults/**/*.opencover.xml" /d:sonar.qualitygate.wait=true /d:sonar.exclusions="**/*.html,**/Bank.WebApi/Program.cs"
 
       - name: Compilar solución
         run: dotnet build "Bank/Bank.sln" --configuration Release
 
+      - name: Ejecutar tests con cobertura
+        run: dotnet test "Bank/Bank.sln" --collect:"XPlat Code Coverage;Format=opencover"
+
+      - name: Verificar cobertura generada
+        run: find . -name "coverage.opencover.xml"
+
       - name: Finalizar análisis SonarQube
         run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+
+      - name: Configurar NuGet
+        run: |
+          dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/UPT-FAING-EPIS/index.json"
 
       - name: Crear paquete NuGet
         run: |
           dotnet pack "Bank/Bank.sln" --configuration Release --output ./packages --include-symbols
-      - name: Configurar NuGet
-        run: |
-          dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/UPT-FAING-EPIS/index.json"
-        
+
       - name: Publicar paquete en GitHub Packages
         run: |
           dotnet nuget push ./packages/*.nupkg --api-key ${{ secrets.GHUB_TOKEN }} --source "github" --skip-duplicate
 
   release:
     name: Generar Release en GitHub
+    needs: sonarqube  # Asegura que se ejecute después de completar el job anterior
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -98,5 +97,5 @@ jobs:
           tag: ${{ env.TAG_NAME }}
           name: "Release ${{ env.TAG_NAME }}"
           bodyFile: "release_notes.md"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GHUB_TOKEN }}
           replacesArtifacts: true
