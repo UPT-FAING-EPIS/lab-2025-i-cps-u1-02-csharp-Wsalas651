@@ -22,9 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Importante para SonarQube
-
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -34,8 +31,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Ejecutar tests con cobertura
-        run: dotnet test "Bank/Bank.sln" --collect:"XPlat Code Coverage;Format=opencover"
 
       - name: Instalar dotnet-sonarscanner y coverlet
         run: |
@@ -43,15 +38,24 @@ jobs:
 
       - name: Restaurar dependencias
         run: dotnet restore "Bank/Bank.sln"
+      
+      - name: Ejecutar tests con cobertura
+        run: dotnet test "Bank/Bank.sln" --collect:"XPlat Code Coverage;Format=opencover"
 
       - name: Iniciar análisis SonarQube
-        run: dotnet-sonarscanner begin /k:"${{ env.SONAR_PROJECT }}" /o:"${{ env.SONAR_ORG }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="Bank/Bank.WebApi.Tests/TestResults/**/*.opencover.xml" /d:sonar.qualitygate.wait=true /d:sonar.exclusions="**/*.html" /d:sonar.coverage.exclusions="**/**/Program.cs"
+        run: |
+            dotnet-sonarscanner begin \
+            /k:"${{ env.SONAR_PROJECT }}" \
+            /o:"${{ env.SONAR_ORG }}" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.opencover.reportsPaths="Bank/**/coverage.opencover.xml" \
+            /d:sonar.qualitygate.wait=true \
+            /d:sonar.exclusions="**/*.html" \
+            /d:sonar.coverage.exclusions="Bank/Bank.WebApi/Program.cs"
 
       - name: Compilar solución
         run: dotnet build "Bank/Bank.sln" --configuration Release
-
-      - name: Verificar cobertura generada
-        run: find . -name "**.cobertura.xml"
 
       - name: Finalizar análisis SonarQube
         run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
@@ -66,7 +70,6 @@ jobs:
 
   release:
     name: Generar Release en GitHub
-    needs: sonarqube  # Asegura que se ejecute después de completar el job anterior
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
