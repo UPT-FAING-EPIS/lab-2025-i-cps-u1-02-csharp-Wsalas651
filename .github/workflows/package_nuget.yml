@@ -40,11 +40,7 @@ jobs:
         run: dotnet restore "Bank/Bank.sln"
       
       - name: Ejecutar tests con cobertura (OpenCover)
-        run: |
-          dotnet test Bank/Bank.WebApi.Tests/Bank.WebApi.Tests.csproj \
-            /p:CollectCoverage=true \
-            /p:CoverletOutputFormat=opencover \
-            /p:CoverletOutput=TestResults/coverage.opencover.xml
+        run: dotnet test Bank/Bank.WebApi.Tests/Bank.WebApi.Tests.csproj --collect:"XPlat Code Coverage"
 
       - name: Iniciar análisis SonarQube
         run: |
@@ -53,7 +49,7 @@ jobs:
             /o:"${{ env.SONAR_ORG }}" \
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.opencover.reportsPaths="Bank/Bank.WebApi.Tests/TestResults/coverage.opencover.xml" \
+            /d:sonar.cs.opencover.reportsPaths="Bank/Bank.WebApi.Tests/TestResults/**/*.cobertura.xml" \
             /d:sonar.qualitygate.wait=true \
             /d:sonar.exclusions="**/*.html" \
             /d:sonar.coverage.exclusions="Bank/Bank.WebApi/Program.cs"
@@ -69,11 +65,11 @@ jobs:
           dotnet pack "Bank/Bank.sln" --configuration Release --output ./packages --include-symbols
       - name: Configurar NuGet
         run: |
-          dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/UPT-FAING-EPIS/index.json"
+          dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/UPT-FAING-EPIS/index.json"
         
       - name: Publicar paquete en GitHub Packages
         run: |
-          dotnet nuget push ./packages/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
+          dotnet nuget push ./packages/*.nupkg --api-key ${{ secrets.GHUB_TOKEN }} --source "github" --skip-duplicate
 
   release:
     name: Generar Release en GitHub
