@@ -64,7 +64,6 @@ jobs:
 
   release:
     name: Generar Release en GitHub
-    needs: sonarqube  # Asegura que se ejecute después de completar el job anterior
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
